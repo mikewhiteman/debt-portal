@@ -82,7 +82,6 @@ def verify2fa():
 def register():
     return render_template('register.html')
 
-
 @application.route('/welcome', methods = ['GET', 'POST'])
 @authorize
 def welcome(username):
@@ -175,7 +174,7 @@ def profile(username):
     return redirect(url_for("profile"))
 
 @application.route('/users', methods = ['GET'])
-def releases():
+def users():
     return "[System Error] Failed to connct to the Debt Direct admin portal at 192.168.1.1..."
     
 @application.route('/logout', methods = ['GET'])
