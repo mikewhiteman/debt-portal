@@ -2,11 +2,14 @@ import os
 import uuid
 import hashlib
 import datetime as dt
+import twilio_sms
 from flask import Flask, session, render_template, url_for, redirect, jsonify, request, abort
 from flask_sqlalchemy import SQLAlchemy
+from functools import wraps
+from dotenv import load_dotenv
 from forms import LoginForm, CommentForm, PaymentForm, ProfileForm
 from models import db, User, Payments, PaymentsTable, Comments
-from functools import wraps
+
 
 application = Flask(__name__)
 
@@ -16,6 +19,7 @@ application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///portal.db'
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 application.app_context().push()
 db.init_app(application)
+
 
 def authorize(f):
     @wraps(f)
@@ -42,17 +46,23 @@ def login():
         raw_hash = hashlib.sha256(password.encode())
         str_hash = raw_hash.hexdigest()
 
-        result = db.engine.execute(f"SELECT * FROM Users WHERE username='{username}' AND password='{str_hash}'")
-        user = [row[0] for row in result]
+        user = User.query.filter_by(username=username).first()
 
-        if not user:
-            print(f"[!] Username {username} failed to login")
-        else:
+        if user and user.check_password(str_hash):
             print(f"[*] Username {username} logged in successfully")
             session['username'] = username
             return redirect(url_for('welcome'))
-        
+
+        else:
+            print(f"[!] Username {username} failed to login")
+
     return render_template('login.html', form=form)
+
+
+@application.route('/register', methods = ['GET', 'POST'])
+def register():
+    return render_template('register.html')
+
 
 @application.route('/welcome', methods = ['GET', 'POST'])
 @authorize
@@ -145,9 +155,10 @@ def profile(username):
                 abort(500)
     return redirect(url_for("profile"))
 
-@application.route('/admin', methods = ['GET'])
+@application.route('/users', methods = ['GET'])
 def releases():
     return "[System Error] Failed to connct to the Debt Direct admin portal at 192.168.1.1..."
+    
 @application.route('/logout', methods = ['GET'])
 def logout():
     session.clear()

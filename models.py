@@ -33,6 +33,8 @@ class User(db.Model):
         db.session.commit()
         print("Updated user")
 
+    def check_password(self, password):
+        return self.password == password
 
 class Payments(db.Model):
         __tablename__ ='Payments'
