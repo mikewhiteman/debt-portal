@@ -1,0 +1,34 @@
+{% extends "base_auth.html" %}
+
+{% block content %}
+<div class="text-center">
+    <h2 class="page-section-heading text-secondary mb-0 d-inline-block">Talk to a support agent</h2> </br></br></br>
+</div>
+
+<div class="container-fluid overflow-auto">
+    <div class="card">
+        <div class="card-body">
+            <div class="divider-custom">
+                <div class="divider-custom-line"></div>
+                <div class="divider-custom-icon"></div><h5 class="text-secondary">Live Chat</h5>
+                <div class="divider-custom-line"></div>
+            </div>
+            {% for comment in comments %}
+                <p class="text-secondary text-left"> {{ username }} [{{ comment.date }}]: {{ comment.message |safe }}</p>
+            {% endfor %} <br><br><br>
+            <form method="POST">
+                {{ form.hidden_tag()}}
+                <div class="form-group">
+                  <strong>
+                    {{ form.message.label(class="text-secondary") }}
+                  </strong>
+                  {{ form.message(class="form-control") }}
+                  <small></small>
+                </div>
+                {{ form.submit(class="btn btn-primary") }}
+                {{ form.delete(class="btn btn-danger") }}
+              </form>
+        </div>
+      </div>
+</div>
+{% endblock %}

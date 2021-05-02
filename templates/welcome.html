@@ -1,0 +1,23 @@
+{% extends "base_auth.html" %}
+
+{% block content %}
+
+<div class="text-center">
+    <h2 class="page-section-heading text-secondary mb-0 d-inline-block">Welcome back, {{ name }}! 👋 </h2> </br></br></br>
+</div>
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="text-secondary text-left">Welcome back to your personal loan portal, where you can:</h5></br>
+            <ul class="text-secondary text-left">
+                <li>Update your contact information</li>
+                <li>View your outstanding loan balance</li>
+                <li>Submit loan payments</li>
+                <li>Contact customer support agent</li>
+            </ul></br>   
+            <h6 class="text-secondary text-center">As of {{ date }}, you still have ${{ loan_balance }} in outstanding debt to pay off.<h6>
+        </div>
+      </div>
+</div>
+{% endblock %}

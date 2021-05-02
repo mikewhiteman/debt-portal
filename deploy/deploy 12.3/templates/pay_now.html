@@ -1,0 +1,59 @@
+{% extends "base_auth.html" %}
+
+{% block content %}
+
+<div class="text-center">
+    <h2 class="page-section-heading text-secondary mb-0 d-inline-block">Pay off your debt</h2> </br></br></br>
+</div>
+
+<div class="container w-50 p-3">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="text-secondary">Payments are currently disabled as we go through routine system maintenance.</h5><br><br>
+            <form method="POST">
+                <fieldset disabled>
+                    {{ form.hidden_tag()}}
+                    <div class="form-group text-left">
+                    <strong>
+                        {{ form.billing_name.label(class="text-secondary") }}
+                    </strong>
+                    {{ form.billing_name(class="form-control") }}
+                    <small></small>
+                    </div>
+                    <div class="form-group text-left">
+                    <strong>
+                        {{ form.billing_address.label(class="text-secondary")}}
+                    </strong>
+                    {{ form.billing_address(class="form-control") }}
+                    </div>
+                    <div class="form-group text-left">
+                        <strong>
+                        {{ form.billing_state.label(class="text-secondary")}}
+                        </strong>
+                        {{ form.billing_state(class="form-control") }}
+                    </div>
+                    <div class="form-group text-left">
+                        <strong>
+                        {{ form.billing_zip.label(class="text-secondary")}}
+                        </strong>
+                        {{ form.billing_zip(class="form-control") }}
+                    </div>
+                    <div class="form-group text-left">
+                        <strong>
+                        {{ form.cc_number.label(class="text-secondary")}}
+                        </strong>
+                        {{ form.cc_number(class="form-control") }}
+                    </div>
+                    <div class="form-group text-left">
+                        <strong>
+                        {{ form.exp_date.label(class="text-secondary")}}
+                        </strong>
+                        {{ form.exp_date(class="form-control") }}
+                    </div>
+                    {{ form.submit(class="btn btn-primary") }}
+                </fieldset>
+              </form>
+        </div>
+      </div>
+</div>
+{% endblock %}
