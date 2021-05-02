@@ -2,13 +2,13 @@ import os
 import uuid
 import hashlib
 import datetime as dt
-import twilio_sms
 from flask import Flask, session, render_template, url_for, redirect, jsonify, request, abort
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
 from dotenv import load_dotenv
-from forms import LoginForm, CommentForm, PaymentForm, ProfileForm
+from forms import LoginForm, CommentForm, PaymentForm, ProfileForm, TwoFactorForm
 from models import db, User, Payments, PaymentsTable, Comments
+from twilio_verify import request_verification_token, check_verification_token
 
 
 application = Flask(__name__)
@@ -24,7 +24,7 @@ db.init_app(application)
 def authorize(f):
     @wraps(f)
     def decorated_function(*args, **kws):
-            if not session.get('username'):
+            if not session.get('username') or not session.get('2fa_verified'):
                 print("Invalid session! Returning to login")
                 return redirect(url_for('login'))
             else:
@@ -51,12 +51,31 @@ def login():
         if user and user.check_password(str_hash):
             print(f"[*] Username {username} logged in successfully")
             session['username'] = username
-            return redirect(url_for('welcome'))
+            session['2fa_verified'] = False
+            request_verification_token('+5555555555')
+            return redirect(url_for('verify2fa'))
 
         else:
             print(f"[!] Username {username} failed to login")
 
     return render_template('login.html', form=form)
+
+@application.route('/verify2fa', methods = ['GET', 'POST'])
+def verify2fa():
+    form = TwoFactorForm(csrf_enabled=False)
+    if form.validate_on_submit():
+        code = form.code.data
+        valid = check_verification_token('+5555555555', code)
+        if valid:
+            print("Valid code")
+            session['2fa_verified'] = True
+            return redirect(url_for('welcome'))
+
+        else:
+            print("Invalid code")
+
+
+    return render_template('verify2fa.html', form=form)
 
 
 @application.route('/register', methods = ['GET', 'POST'])

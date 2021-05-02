@@ -1,0 +1,23 @@
+{% extends "base_unauth.html" %}
+{% block content %}
+
+<div class="card">
+    <div class="card-header text-secondary" style="min-width:350px">
+      Verify your identity with SMS code
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+              <strong>
+                {{ form.code.label(class="text-secondary") }}
+              </strong>
+              {{ form.code(class="form-control") }}
+              <small></small>
+            </div>
+            {{ form.submit(class="btn btn-primary") }}
+          </form>
+    </div>
+  </div>
+
+{% endblock %}

@@ -33,3 +33,7 @@ class ProfileForm(FlaskForm):
     current_loan_balance = IntegerField('Current Loan Balance: ')
     hash_validation = HiddenField('Hash: ')
     submit = SubmitField('Save Changes')
+
+class TwoFactorForm(FlaskForm):
+    code = StringField('SMS Code: ')
+    submit = SubmitField('Submit')
