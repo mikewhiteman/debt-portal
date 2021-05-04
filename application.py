@@ -20,7 +20,6 @@ application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 application.app_context().push()
 db.init_app(application)
 
-
 def authorize(f):
     @wraps(f)
     def decorated_function(*args, **kws):
@@ -114,6 +113,7 @@ def pay_now(username):
 @application.route('/payments', methods = ['GET'])
 @authorize
 def payments(username):
+    
     user = User.query.filter_by(username=username).first()
     payments = Payments.query.filter_by(user_id=user.id).all()
     payments_table = PaymentsTable(payments)
