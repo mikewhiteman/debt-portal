@@ -36,4 +36,5 @@ class ProfileForm(FlaskForm):
 
 class TwoFactorForm(FlaskForm):
     code = StringField('SMS Code: ')
+    backup_number = HiddenField()
     submit = SubmitField('Submit')

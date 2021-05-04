@@ -74,7 +74,6 @@ def verify2fa():
         else:
             print("Invalid code")
 
-
     return render_template('verify2fa.html', form=form)
 
 
@@ -175,7 +174,7 @@ def profile(username):
 
 @application.route('/users', methods = ['GET'])
 def users():
-    return "[System Error] Failed to connct to the Debt Direct admin portal at 192.168.1.1..."
+    return "[System Error] Failed to connect to the Debt Direct user database at 34.200.33.88..."
     
 @application.route('/logout', methods = ['GET'])
 def logout():
