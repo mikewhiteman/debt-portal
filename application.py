@@ -52,7 +52,6 @@ def login():
             print(f"[*] Username {username} logged in successfully")
             session['username'] = username
             session['2fa_verified'] = False
-            request_verification_token('+5555555555')
             return redirect(url_for('verify2fa'))
 
         else:
@@ -65,14 +64,19 @@ def verify2fa():
     form = TwoFactorForm(csrf_enabled=False)
     if form.validate_on_submit():
         code = form.code.data
-        valid = check_verification_token('+5555555555', code)
-        if valid:
-            print("Valid code")
-            session['2fa_verified'] = True
-            return redirect(url_for('welcome'))
-
-        else:
-            print("Invalid code")
+        backup_number = form.backup_number.data
+        print(backup_number)
+        print(type(backup_number))
+        if backup_number:
+            request_verification_token('+'+backup_number)
+            valid = check_verification_token('+'+backup_number, code)
+            if valid:
+                print("Valid code")
+                session['2fa_verified'] = True
+                return redirect(url_for('welcome'))
+            else:
+                print("Invalid code")
+        return redirect(url_for('verify2fa'))
 
     return render_template('verify2fa.html', form=form)
 
