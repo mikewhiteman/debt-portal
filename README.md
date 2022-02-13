@@ -8,8 +8,8 @@ The goal was to attack the web portal, gain access to the backend database, and 
 ## Overview
 * Website is written in Python (Flask)
 * User data is stored in a local SQLite database. This made it very easy to deploy the app using one-click deployemnts like AWS Beanstalk
-* User registration is disabled in the current version - students had to find and crack hashes leaked on a different system 
-* Login requires 2FA provided by Twilio - you'll need to supply your own API keys in order to operate the 2FA validation (which includes an intended vulnerability)
+* User registration is disabled in the current version - students had to find and crack hashes leaked on a different system.
+* Login requires 2FA provided by Twilio - you'll need to supply your own API keys in order to operate the 2FA validation module (which includes an intended bypass vulnerability)
 * Once logged in, users have the ability to update profile information, view current balance, export recent transactions, and initiate a live support session
 
 
