@@ -1,5 +1,5 @@
 # DebtPortal Vulnerable App
-I built Debt Portal as part of a capstone CTF challenge for my Ethical Hacking (CIS 4093) students at Baruch. The entire CTF consisted of a penetration test against a fictious student loan company called Debt Direct, and involved attacking services with known vulnerable configurations (e.g. FTP with anonymous access) along with a vulnerable web portal that I quickly put together in Python. 
+I built Debt Portal as part of a capstone CTF challenge for my Ethical Hacking (CIS 4093 / 4560) students at Baruch. The entire CTF consisted of a penetration test against a fictious student loan company called Debt Direct, and involved attacking services with known vulnerable configurations (e.g. FTP with anonymous access) along with a vulnerable web portal that I quickly put together in Python. 
 
 The goal was to attack the web portal, gain access to the backend database, and find a way to erase student loan debt from a fictious user's account -- and of course document everything, since was part of an ethical penetration testing assignment.
 
