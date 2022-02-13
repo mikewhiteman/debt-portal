@@ -1,8 +1,8 @@
 import os
 from twilio.rest import Client, TwilioException
 
-twilio_account_sid = os.environ.get('twilio_account_sid')
-twilio_auth_token = os.environ.get('twilio_auth_token')
+twilio_account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+twilio_auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
 twilio_verify_service_sid = os.environ.get('twilio_verify_service_sid')
 
 def get_verify_client():

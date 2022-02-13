@@ -9,12 +9,19 @@ from dotenv import load_dotenv
 from forms import LoginForm, CommentForm, PaymentForm, ProfileForm, TwoFactorForm
 from models import db, User, Payments, PaymentsTable, Comments
 from twilio_verify import request_verification_token, check_verification_token
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 
 application = Flask(__name__)
-
-# App Config
-application.config['SECRET_KEY'] = os.environ.get('PORTAL_SECRET', str(uuid.uuid4()))
+limiter = Limiter(
+    application,
+    key_func=get_remote_address,
+    default_limits=[]
+)
+ 
+# App Config, LoadDB
+application.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET', str(uuid.uuid4()))
 application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///portal.db'
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 application.app_context().push()
@@ -24,11 +31,9 @@ def authorize(f):
     @wraps(f)
     def decorated_function(*args, **kws):
             if not session.get('username') or not session.get('2fa_verified'):
-                print("Invalid session! Returning to login")
                 return redirect(url_for('login'))
             else:
-                username = session.get('username')
-                print(f"Valid session with {username}")     
+                username = session.get('username')  
                 return f(username, *args, **kws)        
     return decorated_function
 
@@ -48,7 +53,6 @@ def login():
         user = User.query.filter_by(username=username).first()
 
         if user and user.check_password(str_hash):
-            print(f"[*] Username {username} logged in successfully")
             session['username'] = username
             session['2fa_verified'] = False
             return redirect(url_for('verify2fa'))
@@ -59,22 +63,20 @@ def login():
     return render_template('login.html', form=form)
 
 @application.route('/verify2fa', methods = ['GET', 'POST'])
+@limiter.limit("10/second", override_defaults=False)
 def verify2fa():
     form = TwoFactorForm(csrf_enabled=False)
     if form.validate_on_submit():
         code = form.code.data
         backup_number = form.backup_number.data
-        print(backup_number)
-        print(type(backup_number))
         if backup_number:
             request_verification_token('+'+backup_number)
             valid = check_verification_token('+'+backup_number, code)
             if valid:
-                print("Valid code")
                 session['2fa_verified'] = True
                 return redirect(url_for('welcome'))
             else:
-                print("Invalid code")
+                print("[!] Invalid 2FA code")
         return redirect(url_for('verify2fa'))
 
     return render_template('verify2fa.html', form=form)
@@ -90,7 +92,6 @@ def welcome(username):
     user = User.query.filter_by(username=username).first()
     first_name = user.first_name
     loan_balance = user.current_loan_balance
-
     today = dt.datetime.now()
     short_date = today.strftime("%B %Y")
 
@@ -127,9 +128,6 @@ def support(username):
     stored_comments = Comments.query.filter_by(user_id=user.id).all()
     form = CommentForm(csrf_enabled=False)
     if form.validate_on_submit():
-        print(form.submit.data)
-        print(form.delete.data)
-
         if form.submit.data:
             date = dt.datetime.utcnow().strftime('%B %d, %Y')
             user_id = user.id
@@ -154,7 +152,7 @@ def profile(username):
 
     if request.method == "GET":
         form.process(obj=user)
-        form.hash_validation.data = hashlib.md5(str(user.current_loan_balance).encode('utf-8')).hexdigest()
+        form.hash_validation.data = hashlib.md5(str(user.current_loan_balance).encode('utf-8')).hexdigest() #Vulnerable hashing logic
         return render_template('profile.html', form=form)
 
     if request.method == "POST":
@@ -175,10 +173,6 @@ def profile(username):
                 print(f"Hash failed - user provided {user_provided_hash} when {expected_hash} was expected")
                 abort(500)
     return redirect(url_for("profile"))
-
-@application.route('/users', methods = ['GET'])
-def users():
-    return "[System Error] Failed to connect to the Debt Direct user database at 34.200.33.88..."
     
 @application.route('/logout', methods = ['GET'])
 def logout():
